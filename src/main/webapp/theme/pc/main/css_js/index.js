@@ -2,7 +2,7 @@
 $(window).load(function(){
     createLeftItem();
     //左侧导航栏点击事件
-    // selectMenu();
+    selectMenu();
 });
 //创建左侧导航栏
 function createLeftItem(){
@@ -24,8 +24,7 @@ function createLeftItem(){
                 isApp = false;
             }
             //是否存在上级菜单
-            var parentLevel = obj.outlineLevel.substring(0,obj.outlineLevel.lastIndexOf(".")).toString();
-            parentLevel = parentLevel.replaceAll(".","-");
+            var parentLevel = obj.outlineLevel.substring(0,obj.outlineLevel.lastIndexOf(".")).replaceAll(".","-");
 
             var thisN = obj.outlineLevel.substring(0,obj.outlineLevel.indexOf("."));
             // console.log(obj.outlineLevel)
@@ -93,9 +92,12 @@ function selectMenu(){
 }
 
 function click_item(url,menuId){
-    $.post("/core/menuTree/setMenuTree.do",{menuId:menuId},function(){
-        window.location.href=url;
-    },"json");
+    $.post(
+        "/core/menuTree/setMenuTree.do",
+        {menuId:menuId},
+        function(){window.location.href=url;},
+        "json"
+    );
 }
 
 function clone_my_nav(clas){

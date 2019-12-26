@@ -66,7 +66,7 @@ public class AppTypeInfoService extends GenericService<AppTypeInfoEntity,String>
             values.put("searchKey",searchKey);
             baseSQL += " and (locate(:searchKey,ati.TYPE_NAME)>0 or (:searchKey,ati.TYPE_CODE)>0)";
         }
-        baseSQL += "oeder by ati.SYS_TIME desc";
+        baseSQL += " order by ati.SYS_TIME desc";
         String[] fields = {"typeId","typeName","typeCode"};
         List<Map<String,Object>> list = getNativeMapList(entityManager,baseSQL,values,fields,page,rows);
 

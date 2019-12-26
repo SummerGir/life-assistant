@@ -1,6 +1,6 @@
 <%@ page import="net.sf.json.JSONArray" %>
 <%@ page import="java.util.List" %>
-<%@ page import="com.app.core.memberTree.service.CoreMenuTreeService" %>
+<%@ page import="com.app.core.memberTree.service.CoreMenuTreeInfoService" %>
 <%@ page import="java.util.Map" %>
 <%@ page import="com.app.core.memberTree.entity.CoreMenuTreeInfoEntity" %>
 <%@ page import="util.context.Context" %><%--
@@ -16,8 +16,8 @@
 <%
 
     JSONArray arr = new JSONArray();
-    List<Map<String,Object>> list = CoreMenuTreeService.getInstance().getMainInfo(null,"1");
-    List<Map<String,Object>> listTree = CoreMenuTreeService.getInstance().getMenuTree(list);
+    List<Map<String,Object>> list = CoreMenuTreeInfoService.getInstance().getMainInfo(null,"1");
+    List<Map<String,Object>> listTree = CoreMenuTreeInfoService.getInstance().getMenuTree(list);
     if(listTree != null && listTree.size()>0){
         listTree = (List<Map<String,Object>>) listTree.get(0).get("children");
     }
@@ -36,13 +36,24 @@
     </title>
 
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+    <!--js-->
+    <script type="text/javascript" src="/public/jquery/jquery.js"></script>
+    <script type="text/javascript" src="/public/eiis/eiis.js"></script>
+
+    <script type="text/javascript" src="/public/bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/theme/pc/main/css_js/index.js"></script>
+    <script type="text/javascript">
+        var menuTreeId = "<%=menuTreeId%>";
+        var menuList = <%=arr%>;
+    </script>
+
     <!--设置浏览器窗口图标-->
     <link rel="shortcut icon" type="image/x-icon" href="/theme/pc/main/img/logoIco.ico"media="screen" />
-    <script type="text/javascript" src="/public/jquery/jquery.js"></script>
-    <script type="text/javascript" src="/public/eiis/eiis.foundation.js"></script>
-    <script type="text/javascript" src="/public/bootstrap/js/bootstrap.min.js"></script>
+
+    <!--css-->
     <link rel="stylesheet" href="/public/bootstrap/css/bootstrap.css"/>
-    <link href="/theme/pc/main/css_js/index.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="/theme/pc/main/css_js/index.css"/>
 
     <master:ContentPlaceHolder id="head"/>
 </head>
@@ -73,8 +84,8 @@
             </ul>
         </div>
     </div>
-
 </nav>
+
 <!-- 顶部导航栏 完成 -->
 <div class="main-center-div">
     <div class="main-center-nav">
@@ -85,11 +96,8 @@
     </div>
 </div>
 
-<script type="text/javascript">
-    var menuTreeId = "<%=menuTreeId%>";
-    var menuList = <%=arr%>;
-</script>
-<script type="text/javascript" src="/theme/pc/main/css_js/index.js"></script>
+
+
 
 </body>
 </html>

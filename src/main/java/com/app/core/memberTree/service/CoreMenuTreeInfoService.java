@@ -2,7 +2,7 @@ package com.app.core.memberTree.service;
 
 import com.app.core.memberTree.dao.CoreMenuTreeDao;
 import com.app.core.memberTree.entity.CoreMenuTreeInfoEntity;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,19 +16,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Service("com.app.core.memberTree.service.CoreMenuTreeService")
-public class CoreMenuTreeService extends GenericService<CoreMenuTreeInfoEntity,String>{
-
+@Service("com.app.core.memberTree.service.CoreMenuTreeInfoService")
+public class CoreMenuTreeInfoService extends GenericService<CoreMenuTreeInfoEntity,String> {
     @Autowired
     protected CoreMenuTreeDao dao;
 
     @Autowired
     protected EntityManager entityManager;
 
-    public CoreMenuTreeService(){}
-
-    public static CoreMenuTreeService getInstance(){
-        return ApplicationContext.getCurrent().getBean(CoreMenuTreeService.class);
+    public static CoreMenuTreeInfoService getInstance(){
+        return ApplicationContext.getCurrent().getBean(CoreMenuTreeInfoService.class);
     }
 
     @Override
@@ -99,7 +96,7 @@ public class CoreMenuTreeService extends GenericService<CoreMenuTreeInfoEntity,S
         return listMenu;
     }
 
-    public List<Map<String,Object>> getMenuTree(List<Map<String,Object>> list,String pl){
+    public List<Map<String,Object>> getMenuTree(List<Map<String,Object>> list, String pl){
 
         List<Map<String,Object>> listChildren = new ArrayList<>();
         for(Map m:list){
@@ -129,31 +126,82 @@ public class CoreMenuTreeService extends GenericService<CoreMenuTreeInfoEntity,S
     }
 
 
+    /**
+     * 移动菜单
+     * @param treeId
+     * @param type：true(上移)、false(下移)
+     */
+    @Transactional
+    public void moveTree(String treeId,boolean type) throws Exception{
+        CoreMenuTreeInfoEntity entity = dao.findOne(treeId);
+        if(entity == null){
+            return;
+        }
+        int menuLevel = entity.getMenuLevel();
+        if(type){
+            menuLevel--;
+        }else {
+            menuLevel++;
+        }
+        String outlineLevel = entity.getOutlineLevel();
+        if(outlineLevel.split("\\.").length>1){
+            outlineLevel = outlineLevel.substring(0,outlineLevel.lastIndexOf("."))+"."+menuLevel;
+        }else {
+            outlineLevel = String.valueOf(menuLevel);
+        }
+
+        CoreMenuTreeInfoEntity entity1 = findOneByOutlineLevel(outlineLevel);
+        if(entity1 == null){
+            return;
+        }
+        moveChildren(entity1.getOutlineLevel(),"temp");
+        moveChildren(entity.getOutlineLevel(),entity1.getOutlineLevel());
+        moveChildren("temp",entity.getOutlineLevel());
+
+        entity1.setMenuLevel(entity.getMenuLevel());
+        entity1.setOutlineLevel(entity.getOutlineLevel());
+        entity.setMenuLevel(menuLevel);
+        entity.setOutlineLevel(outlineLevel);
+
+        List<CoreMenuTreeInfoEntity>  list = new ArrayList<>();
+        list.add(entity);
+        list.add(entity1);
+        save(list);
+    }
+
+    private void moveChildren(String oldParen,String newParen){
+        String sql = "UPDATE core_menu_tree_info a set a.OUTLINE_LEVEL=concat(:newParen,'.',a.menu_level) WHERE LEFT (a.outline_level,LENGTH(:oldParen)) = :oldRaren and LENGTH(a.outline_level)>LENGTH(:oldParen)";
+        entityManager.createNativeQuery(sql).setParameter("oldParen",oldParen).setParameter("newParen",newParen).executeUpdate();
+    }
 
 
+    public CoreMenuTreeInfoEntity findOneByOutlineLevel(String outlineLevel){
+        String sql = "SELECT en from CoreMenuTreeInfoEntity en WHERE en.outlineLevel=:outlineLevel";
+        List<CoreMenuTreeInfoEntity> list = entityManager.createQuery(sql).setParameter("outlineLevel",outlineLevel).getResultList();
+        if(list != null && list.size()>0){
+            return list.get(0);
+        }else {
+            return null;
+        }
 
+    }
 
+    public CoreMenuTreeInfoEntity findOneByCode(String code){
+        List<CoreMenuTreeInfoEntity> list = entityManager.createQuery("select en from CoreMenuTreeInfoEntity en,CoreMenuUrlInfoEntity  en2 where en.urlId = en2.urlId and en2.code = :code").setParameter("code",code).getResultList();
+        if(list != null && list.size()>0){
+            return list.get(0);
+        }else
+            return null;
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    //根据上级，得到子级下一个排序数字
+    public int getMenuLevelByParLevel(String outlineLevel){
+        String sql = "SELECT MAX(a.MENU_LEVEL) FROM core_menu_tree_info a WHERE LEFT(a.outline_level,LENGTH(:outlineLevel))=:outlineLevel and LENGTH(a.outlineLevel)>LENGTH(:outlineLevel) ";
+        List list = entityManager.createNativeQuery(sql).setParameter("outlineLevel",outlineLevel).getResultList();
+        int n = 1;
+        if(list != null && list.size()>0){
+            n = Integer.parseInt(list.get(0).toString()) + 1;
+        }
+        return n;
+    }
 }
