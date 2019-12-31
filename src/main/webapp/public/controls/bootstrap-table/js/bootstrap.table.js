@@ -2,6 +2,7 @@
  * Created by xiucai on 2017/10/30.
  */
 
+
 function TableEntity(){
 //覆盖默认参数
     this.defaultOpt = {
@@ -243,6 +244,7 @@ TableEntity.prototype.mesTable = function(text){
         if(this.tableEntity == undefined){
             this.tableEntity = new TableEntity();
         }
+
         this.tableEntity.initTable(options);
     };
 })(jQuery);

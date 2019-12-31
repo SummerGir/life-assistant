@@ -7,6 +7,7 @@ import com.app.typeinfo.entity.AppTypeInfoEntity;
 import com.app.typeinfo.entity.TypeSelectEntity;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import util.Utils;
 import util.dataManage.GenericDao;
@@ -17,8 +18,10 @@ import util.spring.ApplicationContext;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaBuilder;
 import java.util.*;
 
+@Service("com.app.typeinfo.service.AppTypeDetailService")
 public class AppTypeDetailService extends GenericService<AppTypeDetailEntity,String>{
 
     @Autowired
@@ -56,8 +59,8 @@ public class AppTypeDetailService extends GenericService<AppTypeDetailEntity,Str
         detialdao.delete(detialId);
     }
     @Transactional
-    public void deleteByTypeDetialId(String typeDetialId){
-        entityManager.createQuery("delete from AppTypeDetailEntity where typeId=:typeDetialId").setParameter("typeDetialId",typeDetialId).executeUpdate();
+    public void deleteByTypeId(String typeId){
+        entityManager.createQuery("delete from AppTypeDetailEntity where typeId=:typeId").setParameter("typeId",typeId).executeUpdate();
     }
 
     @Transactional
@@ -87,14 +90,14 @@ public class AppTypeDetailService extends GenericService<AppTypeDetailEntity,Str
         String basicSQL = "SELECT atd.TYPE_DETAIL_ID,atd.DETAIL_NAME,atd.DETAIL_CODE,atd.DETAIL_VALUE,atd.DETAIL_LEVEL,atd.`COMMENT`,atd.IS_VALID FROM app_type_detail atd where 1=1";
         Map<String,Object> values = new HashMap<>();
         if(StringUtils.isNotBlank(mianId)){
-            basicSQL += " and atd.TYPE_DETAIL_ID =: mianId";
+            basicSQL += " and atd.TYPE_ID =:mianId";
             values.put("mianId",mianId);
         }
         if(StringUtils.isNotBlank(searchKey)){
             basicSQL += " and (locate(:searchKey,atd.DETAIL_NAME)>0 or (locatd(:searchKey,det.DETAIL_CODE)>0) or (locate(:searchKey,det.DETAIL_VALUE)>0))";
             values.put("searchKey",searchKey);
         }
-        basicSQL += " order by det.IS_VALID desc";
+        basicSQL += " order by atd.IS_VALID desc";
         String[] fields = {"typeDetailId","detailName","detailCode","detailValue","detailLevel","comment","isValid"};
 
         List<Map<String,Object>> list = getNativeMapList(entityManager,basicSQL,values,fields,page,rows);
@@ -116,7 +119,7 @@ public class AppTypeDetailService extends GenericService<AppTypeDetailEntity,Str
         String basicSQL = "SELECT COUNT(1) FROM app_type_info ati join app_type_detail atd on ati.TYPE_ID = atd.TYPE_ID where 1=1";
 
         if(StringUtils.isNotBlank(mainId)){
-            basicSQL += " and ati.TYPE_ID =: mainId";
+            basicSQL += " and ati.TYPE_ID =:mainId";
         }
         if(StringUtils.isNotBlank(searchKey)){
             basicSQL += " and(locate(:searchKey,atd.DETAIL_NAME)>0 or locate(:searchKey,atd.DETAIL_CODE)>0 or (:searchKey,atd.DETAIL_VALUE)>0)";
@@ -191,6 +194,17 @@ public class AppTypeDetailService extends GenericService<AppTypeDetailEntity,Str
         tse.setFinishedList(finishedList);
         tse.setDoingList(doingList);
         return tse;
+    }
+
+    //根据上级，得到子级下一个排序的数据
+    public int getLevelByMainId(String typeId){
+        String sql = "select max(a.DETAIL_LEVEL) from app_type_detail a where a.TYPE_ID=:typeId";
+        List list = entityManager.createNativeQuery(sql).setParameter("typeId",typeId).getResultList();
+        int n = 1;
+        if(list != null && list.size()>0 && list.get(0)!=null){
+            n = Integer.parseInt(list.get(0).toString()) + 1;
+        }
+        return n;
     }
 
 

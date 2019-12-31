@@ -1,8 +1,4 @@
-/*.table-template {
-        display: none;
-    }*/
-
-.table-toolbar {
+.table-toolbar{
     padding: 1px;
 }
 .table-responsive table>tbody>.active,.table-responsive table>tbody>.active td{
@@ -10,18 +6,9 @@
     background-color: #337ab7;
     border-color: #337ab7;
 }
-
-/*.table-toolbar-fixed-top {*/
-    /*position: fixed;*/
-    /*border: 1px solid #ddd;*/
-    /*background-color: white;*/
-    /*z-index: 1000;*/
-/*}*/
-
 .table-custom-ribbon {
     text-align: right;
 }
-
 .table-pagination {
     margin: 0px !important;
 }
@@ -39,7 +26,6 @@
     cursor: pointer;
     *cursor: hand;
 }
-
 .pagination > li > a {
     border-radius: 50px;
     border: 1px solid #5990de;
@@ -48,7 +34,6 @@
     /*font-size: small;*/
     font-weight: bold;
 }
-
 .pagination > li > a:hover,
 .pagination > li > a:focus {
     color: #fff;

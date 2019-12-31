@@ -122,19 +122,4 @@ public class AppTypeInfoService extends GenericService<AppTypeInfoEntity,String>
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

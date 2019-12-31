@@ -31,8 +31,8 @@ public class CoreMenuUrlInfoController {
     public String getMainInfo(HttpServletRequest request, @RequestParam(defaultValue = "1") Integer page,@RequestParam(defaultValue = "1") Integer rows) throws Exception{
         String mainId = request.getParameter("mainId");
         String searcheKey = request.getParameter("searchKey");
-        List<Map<String,Object>> list = coreMenuUrlService.getMainInfo("mainId","searcheKey",page,rows);
-        int count = coreMenuUrlService.getMainCount("mainId","searcheKey");
+        List<Map<String,Object>> list = coreMenuUrlService.getMainInfo(mainId,searcheKey,page,rows);
+        int count = coreMenuUrlService.getMainCount(mainId,searcheKey);
         return GenericController.getTable(list,count,page,rows);
 
     }

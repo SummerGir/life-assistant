@@ -1,0 +1,21 @@
+#left_div .panel-heading{
+    text-align: right;
+}
+#right_div .panel-heading{
+    text-align: right;
+}
+#right_div .my-col{
+    display: flex;
+}
+#right_div .my-col-left-div{
+    width: 130px;
+    text-align: right;
+    padding: 8px 10px;
+}
+#right_div .my-col-right-div{
+    flex: 1;
+    position: relative;
+}
+#right_div .panel-footer{
+    text-align: center;
+}

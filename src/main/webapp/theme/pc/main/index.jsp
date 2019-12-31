@@ -37,22 +37,30 @@
 
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
 
+
     <!--js-->
     <script type="text/javascript" src="/public/jquery/jquery.js"></script>
     <script type="text/javascript" src="/public/eiis/eiis.js"></script>
-
     <script type="text/javascript" src="/public/bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/public/jquery-easyui/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src= "/public/jquery-easyui/locale/easyui-lang-zh_CN.js"></script>
     <script type="text/javascript" src="/theme/pc/main/css_js/index.js"></script>
     <script type="text/javascript">
         var menuTreeId = "<%=menuTreeId%>";
         var menuList = <%=arr%>;
     </script>
+    <script type="text/javascript">
+        EIIS.Common.loadComponent(EIIS.Common.bootstrap.BootstrapTable);
+    </script>
+
 
     <!--设置浏览器窗口图标-->
     <link rel="shortcut icon" type="image/x-icon" href="/theme/pc/main/img/logoIco.ico"media="screen" />
 
     <!--css-->
-    <link rel="stylesheet" href="/public/bootstrap/css/bootstrap.css"/>
+    <link rel="stylesheet" href="/public/jquery-easyui/themes/default/easyui.css"/>
+    <link rel="stylesheet" href="/public/jquery-easyui/themes/icon.css"/>
+    <link rel="stylesheet" href="/public/bootstrap/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="/theme/pc/main/css_js/index.css"/>
 
     <master:ContentPlaceHolder id="head"/>
@@ -88,11 +96,9 @@
 
 <!-- 顶部导航栏 完成 -->
 <div class="main-center-div">
-    <div class="main-center-nav">
-        <div class="main-center">
-            <master:ContentPlaceHolder id="body"/>
-        </div>
-
+    <div class="main-center-nav"></div>
+    <div class="main-center">
+        <master:ContentPlaceHolder id="body"/>
     </div>
 </div>
 

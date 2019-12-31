@@ -2,6 +2,7 @@ package util.filter;
 
 //import eiis.core.memberInfo.service.CoreMemberInfoService;
 
+import com.app.core.memberInfo.service.CoreMemberInfoService;
 import util.context.Context;
 
 import javax.servlet.*;
@@ -36,7 +37,7 @@ public class ContextInitFilter implements Filter {
             Context.createContext(httpServletRequest,(HttpServletResponse) response);
             if(Context.getMember() == null){
                 System.out.println("请登录");
-//                CoreMemberInfoService.getInstance().setMember();
+                CoreMemberInfoService.getInstance().setMember();
             }
 
             chain.doFilter(httpServletRequest, httpServletResponse);

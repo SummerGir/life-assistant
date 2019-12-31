@@ -104,7 +104,22 @@ public class CoreMenuUrlService extends GenericService<CoreMenuUrlInfoEntity,Str
         return count;
     }
 
+    public StringBuffer getMenuUrlOptions(Boolean isHave){
+        StringBuffer stringBuffer = new StringBuffer();
+        if(isHave){
+            stringBuffer.append("<option value='' style=='display:none'>---空菜单---</option>");
+        }
+        try{
+            List<Map<String,Object>> list = getMainInfo(null,null,1,-1);
+            for(Map<String,Object> map:list){
+                stringBuffer.append("<option value='"+ map.get("urlId").toString()+"'>"+ map.get("urlTitle").toString()+"</option>");
+            }
 
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return stringBuffer;
+    }
 
 
 

@@ -31,6 +31,7 @@ public class Context {
 //            member = (CoreMemberInfoEntity) getSession(MEMBER_SESSION_KEY);
         return member;
     }
+
     public static void setMember(CoreMemberInfoEntity mem){
         member = mem;
 //        setSession(MEMBER_SESSION_KEY,member);

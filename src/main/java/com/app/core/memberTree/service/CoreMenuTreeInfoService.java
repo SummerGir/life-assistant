@@ -44,9 +44,16 @@ public class CoreMenuTreeInfoService extends GenericService<CoreMenuTreeInfoEnti
     @Transactional
     public void delete(String mainId)throws Exception{
         //删掉这个要把其下的所有都删除掉
-        String sql = "delete a from core_menu_tree_info a,core_menu_tree_info b where b.MENUID=:mainid and left(a.OUTLINE_LEVEL,length(b.OUTLINE_LEVEL))=b.OUTLINE_LEVEL and length(a.OUTLINE_LEVEL)>=length(b.OUTLINE_LEVEL)";
+        String sql = "delete a from core_menu_tree_info a,core_menu_tree_info b where b.MENU_ID=:mainId and left(a.OUTLINE_LEVEL,length(b.OUTLINE_LEVEL))=b.OUTLINE_LEVEL and length(a.OUTLINE_LEVEL)>=length(b.OUTLINE_LEVEL)";
 
         entityManager.createNativeQuery(sql).setParameter("mainId",mainId).executeUpdate();
+
+
+//        sql = "delete from core_member_info where MEMBER_ID=:memberId";
+//        entityManager.createNativeQuery(sql).setParameter("memberId",mainId).executeUpdate();
+//
+//        sql = "delete from CoreMemberInfoEntity where memberId=:memberId";
+//        entityManager.createQuery(sql).setParameter("memberId",mainId).executeUpdate();
     }
 
     public List<Map<String,Object>> getMainInfo(String mainId, String isShow)throws Exception{
@@ -170,9 +177,14 @@ public class CoreMenuTreeInfoService extends GenericService<CoreMenuTreeInfoEnti
     }
 
     private void moveChildren(String oldParen,String newParen){
-        String sql = "UPDATE core_menu_tree_info a set a.OUTLINE_LEVEL=concat(:newParen,'.',a.menu_level) WHERE LEFT (a.outline_level,LENGTH(:oldParen)) = :oldRaren and LENGTH(a.outline_level)>LENGTH(:oldParen)";
+        String sql = "UPDATE core_menu_tree_info a set a.OUTLINE_LEVEL=concat(:newParen,'.',a.menu_level) WHERE (LEFT(a.outline_level,LENGTH(:oldParen)) = :oldParen) and (LENGTH(a.outline_level)>LENGTH(:oldParen))";
         entityManager.createNativeQuery(sql).setParameter("oldParen",oldParen).setParameter("newParen",newParen).executeUpdate();
     }
+
+
+
+
+
 
 
     public CoreMenuTreeInfoEntity findOneByOutlineLevel(String outlineLevel){
@@ -196,7 +208,7 @@ public class CoreMenuTreeInfoService extends GenericService<CoreMenuTreeInfoEnti
 
     //根据上级，得到子级下一个排序数字
     public int getMenuLevelByParLevel(String outlineLevel){
-        String sql = "SELECT MAX(a.MENU_LEVEL) FROM core_menu_tree_info a WHERE LEFT(a.outline_level,LENGTH(:outlineLevel))=:outlineLevel and LENGTH(a.outlineLevel)>LENGTH(:outlineLevel) ";
+        String sql = "SELECT MAX(a.MENU_LEVEL) FROM core_menu_tree_info a WHERE LEFT(a.outline_level,LENGTH(:outlineLevel))=:outlineLevel and LENGTH(a.outline_level)>LENGTH(:outlineLevel) ";
         List list = entityManager.createNativeQuery(sql).setParameter("outlineLevel",outlineLevel).getResultList();
         int n = 1;
         if(list != null && list.size()>0){
